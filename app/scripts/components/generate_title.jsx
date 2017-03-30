@@ -30,17 +30,26 @@ class MarketingSectionContainer extends React.Component {
     var self = this;
     var collection = new ApiCollection();
 
+    var user = new User();
+    var userId = JSON.parse(localStorage.getItem('user')).objectId;
+
+    user.set('objectId', userId);
+    user.fetch().then(()=>{
+      this.setState({ user })
+    })
+
+
     collection.parseGenres().fetch().done(function(response){
       self.setState({ genres: response[Object.keys(response)[0]] });
     });
 
-    var localUser = JSON.parse(localStorage.getItem('user'));
-    var user = new User();
-    user.set('objectId', localUser.objectId);
-    user.fetch().then( (data) => {
-      this.setState({ user: user });
-      console.log('dis user', this.state.user);
-    })
+    // var localUser = JSON.parse(localStorage.getItem('user'));
+    // var user = new User();
+    // user.set('objectId', localUser.objectId);
+    // user.fetch().then( (data) => {
+    //   this.setState({ user: user });
+    //   console.log('dis user', this.state.user);
+    // })
 
     this.state = {
       genres: [],
@@ -50,6 +59,7 @@ class MarketingSectionContainer extends React.Component {
 
     this.generateMovie = this.generateMovie.bind(this);
     this.addMovieToWatchedList = this.addMovieToWatchedList.bind(this);
+    this.addMovieToRejectedList = this.addMovieToRejectedList.bind(this);
   }
 
   generateMovie(e) {
@@ -66,11 +76,21 @@ class MarketingSectionContainer extends React.Component {
   }
 
   addMovieToWatchedList() {
-    var user = User.current();
+    var user = this.state.user;
     if(user.get('watchedList')) {
       user.get('watchedList').push(this.state.movie);
     } else {
       user.set('watchedList', [this.state.movie])
+    };
+    user.save();
+  }
+
+  addMovieToRejectedList() {
+    var user = this.state.user;
+    if(user.get('rejectedList')) {
+      user.get('rejectedList').push(this.state.movie);
+    } else {
+      user.set('rejectedList', [this.state.movie])
     };
     user.save();
   }
@@ -114,7 +134,7 @@ class MarketingSectionContainer extends React.Component {
                   <img src={"http://image.tmdb.org/t/p/w300/" +  movie.get('poster_path') } alt={movie.get('title')}/>
                   <div className="col-xs-6 col-md-3">
                     <a target="_blank" href={'https://www.google.com/search?q=' + movie.get('title') + ' movie stream'} onClick={this.handleToAccount}><button className="btn-success">Watch It!</button></a>
-                    <button className="btn-danger">Reject Movie</button>
+                    <button className="btn-danger" onClick={this.addMovieToRejectedList}>Reject Movie</button>
                     <button className="btn-primary" onClick={this.addMovieToWatchedList}>Add to Watched List</button>
                   </div>
                   <p className="col-xs-12 col-md-6">{movie.get('overview')}</p>

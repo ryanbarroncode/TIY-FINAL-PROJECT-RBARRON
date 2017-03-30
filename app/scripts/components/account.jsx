@@ -9,11 +9,16 @@ class AccountContainer extends React.Component{
 constructor(props){
   super(props)
 
+  var user = new User();
+  var userId = JSON.parse(localStorage.getItem('user')).objectId;
+
+  user.set('objectId', userId);
+  user.fetch().then(()=>{
+    this.setState({ user: user })
+  })
+
   this.state = {
-    pic: {
-      name: '',
-      url: ''
-    },
+    pic: null,
     preview: null
   }
 
@@ -25,13 +30,17 @@ constructor(props){
 }
 
 componentWillMount() {
-  var localUser = JSON.parse(localStorage.getItem('user'));
-  var user = new User();
 
-  user.set('objectId', localUser.objectId);
-  user.fetch().then(() => {
-    this.setState({ user: user, watchedList: user.get('watchedList') });
-  });
+  var user = User.current();
+
+  // var localUser = JSON.parse(localStorage.getItem('user'));
+  // console.log('here two',localUser.objectId);
+  // var user = new User();
+  //
+  // user.set('objectId', localUser.objectId);
+  // user.fetch().then(() => {
+  //   this.setState({ user: user, watchedList: user.get('watchedList') });
+  // });
 }
 
 handlePicChange(e){
@@ -102,19 +111,29 @@ deleteUser() {
 
   render(){
 
-    var movies;
-    if(this.state.watchedList) {
-      movies = this.state.watchedList.map((movie, index)=> {
+    var user = this.state.user;
+    var watchedList, rejectedList;
+
+    if(user) {
+      watchedList = user.get('watchedList').map((movie, index) => {
         return(
           <li key={index}>
             {movie.title}
             <button className="btn-danger" onClick={(e) => { this.handleDeleteMovie(index) }}>Remove from list</button>
             <hr/>
-
           </li>
         )//create a button, the button runs a function that the movie is passed into. remove from the colletion and update the state.
-      })
-      console.log('here', this.state.watchedList);
+      });
+
+      rejectedList = user.get('rejectedList').map((movie, index) => {
+        return(
+          <li key={index}>
+            {movie.title}
+            <button className="btn-danger" onClick={(e) => { this.handleDeleteMovie(index) }}>Remove from list</button>
+            <hr/>
+          </li>
+        )
+      });
     }
     return(
       <div className="wrapper">
@@ -124,7 +143,18 @@ deleteUser() {
           <h2>Watched Movie List</h2>
           <button className="btn-danger" onClick={this.clearList}>Clear list</button>
           <ul>
-            {movies}
+            { watchedList }
+          </ul>
+          <ul>
+            { rejectedList }
+          </ul>
+        </div>
+
+        <div className="col-md-6">
+          <h2>Rejected Movie List</h2>
+          <button className="btn-danger">Clear list</button>
+          <ul>
+            { rejectedList }
           </ul>
         </div>
 

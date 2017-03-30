@@ -6,8 +6,14 @@ var parse = require('../parse.js');
 
 var User = parse.ParseModel.extend({
   idAttribute: 'objectId',
-  urlRoot: 'https://ryanbarroncode.herokuapp.com/users'
-  },{
+  urlRoot: 'https://ryanbarroncode.herokuapp.com/users',
+
+  defaults: {
+    watchedList: [],
+    rejectedList: []
+  }
+
+},{
   login: function(credentials, callback){
     var url = 'https://ryanbarroncode.herokuapp.com' + '/login?' + $.param(credentials)
     $.get(url).then(data => {
