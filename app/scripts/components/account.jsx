@@ -31,11 +31,11 @@ constructor(props){
     image: false
   }
 
-  this.handleDeleteMovie = this.handleDeleteMovie.bind(this);
-  this.clearList = this.clearList.bind(this);
   this.handlePicChange = this.handlePicChange.bind(this);
   this.handleSubmit = this.handleSubmit.bind(this);
   this.deleteUser = this.deleteUser.bind(this);
+  this.removeFromWatchedList = this.removeFromWatchedList.bind(this);
+  this.removeFromRejectedList = this.removeFromRejectedList.bind(this);
 }
 
 handlePicChange(e){
@@ -67,28 +67,50 @@ handleSubmit(e){
   }
 }
 
-clearList() {
-  this.state.user.set({watchedList: []});
-  // Push that change to the API
-  var updatedUser = this.state.user;
-  this.state.user.save().then( (data) => {
-    this.setState({ watchedList: [] });
-  });
-  // Force the view to update with the new watchedList state
-  // this.forceUpdate();
+// clearList() {
+//   this.state.user.set({watchedList: []});
+//   // Push that change to the API
+//   var updatedUser = this.state.user;
+//   this.state.user.save().then( (data) => {
+//     this.setState({ watchedList: [] });
+//   });
+//   // Force the view to update with the new watchedList state
+//   // this.forceUpdate();
+// }
+
+// handleDeleteMovie(index){
+//   console.log('delete', this.state.watchedList[index]);
+//   // pull the object at this index from the watched list
+//   this.state.watchedList.splice(index, 1)
+//   console.log('updated watched list', this.state.watchedList);
+//   // Like a jQuery PUT
+//   this.state.user.set({watchedList: this.state.watchedList});
+//   // Push that change to the API
+//   this.state.user.save();
+//   // Force the view to update with the new watchedList state
+//   this.forceUpdate();
+// }
+
+removeFromWatchedList(index) {
+  console.log('rejectedList');
+  var user = this.state.user;
+  var rejectedList = user.get('watchedList');
+  rejectedList.splice(index, 1);
+  user.set({rejectedList: rejectedList});
+  user.save().then(()=>{
+    this.setState({user})
+  })
 }
 
-handleDeleteMovie(index){
-  console.log('delete', this.state.watchedList[index]);
-  // pull the object at this index from the watched list
-  this.state.watchedList.splice(index, 1)
-  console.log('updated watched list', this.state.watchedList);
-  // Like a jQuery PUT
-  this.state.user.set({watchedList: this.state.watchedList});
-  // Push that change to the API
-  this.state.user.save();
-  // Force the view to update with the new watchedList state
-  this.forceUpdate();
+removeFromRejectedList(index) {
+  console.log('rejectedList');
+  var user = this.state.user;
+  var rejectedList = user.get('rejectedList');
+  rejectedList.splice(index, 1);
+  user.set({rejectedList: rejectedList});
+  user.save().then(()=>{
+    this.setState({user})
+  })
 }
 
 deleteUser() {
@@ -104,7 +126,7 @@ deleteUser() {
     var user = this.state.user;
     var watchedList, rejectedList;
     var image = this.state.image;
-    console.log('image state', image);
+    console.log('user now', user);
 
     if(user) {
       console.log('image here', user.get('imageUrl'));
@@ -112,7 +134,7 @@ deleteUser() {
         return(
           <li key={index}>
             {movie.title}
-            <button className="btn-danger" onClick={(e) => { this.handleDeleteMovie(index) }}>Remove from list</button>
+            <button className="btn-danger" onClick={(e) => { this.removeFromWatchedList(index) }}>Remove from list</button>
             <hr/>
           </li>
         )//create a button, the button runs a function that the movie is passed into. remove from the colletion and update the state.
@@ -122,7 +144,7 @@ deleteUser() {
         return(
           <li key={index}>
             {movie.title}
-            <button className="btn-danger" onClick={(e) => { this.handleDeleteMovie(index) }}>Remove from list</button>
+            <button className="btn-danger" onClick={(e) => { this.removeFromRejectedList(index) }}>Remove from list</button>
             <hr/>
           </li>
         )
@@ -137,9 +159,6 @@ deleteUser() {
           <button className="btn-danger" onClick={this.clearList}>Clear list</button>
           <ul>
             { watchedList }
-          </ul>
-          <ul>
-            { rejectedList }
           </ul>
         </div>
 
