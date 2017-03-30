@@ -31,7 +31,7 @@ class Header extends React.Component{
           <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul className="nav navbar-nav">
               <li><a className="bodytext" href="#">TV Shows <span className="sr-only">(current)</span></a></li>
-              <li className="bodytext"><a  href="#generate">Movies</a></li>
+              <li className="bodytext"><a  href="#generate/">Movies</a></li>
             </ul>
 
             <ul className="nav navbar-nav navbar-right">

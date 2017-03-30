@@ -21,7 +21,7 @@ constructor(props){
     console.log('after fetch', user);
     if(user.get('imageUrl')) {
       console.log('firing state change');
-      this.setState({image: true});
+      this.setState({ image: true });
     }
   })
 
@@ -50,6 +50,7 @@ handlePicChange(e){
 }
 
 handleSubmit(e){
+  e.preventDefault();
   var user = this.state.user;
   parse.parse.initialize();
   if(this.state.preview) {
@@ -152,7 +153,7 @@ deleteUser() {
 
         <form onSubmit={this.handleSubmit} >
           <input onChange={this.handlePicChange} type="file"/>
-          <img src={ image ? user.get('imageUrl') : this.state.pic} />
+          <img src={ image ? user.get('imageUrl') : this.state.preview} />
           <input className="btn btn-danger" type="submit" value="Upload"/>
         </form>
 
