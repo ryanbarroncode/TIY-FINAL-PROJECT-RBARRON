@@ -22,6 +22,7 @@ constructor(props){
     if(user.get('imageUrl')) {
       console.log('firing state change');
       this.setState({ image: true });
+      this.setState({ preview: user.get('imageUrl')})
     }
   })
 
@@ -53,7 +54,7 @@ handleSubmit(e){
   e.preventDefault();
   var user = this.state.user;
   parse.parse.initialize();
-  if(this.state.preview) {
+  if(this.state.preview && this.state.pic) {
     var pic = this.state.pic;
     var image = new ParseFile(pic);
     image.save({}, {
@@ -66,30 +67,6 @@ handleSubmit(e){
     });
   }
 }
-
-// clearList() {
-//   this.state.user.set({watchedList: []});
-//   // Push that change to the API
-//   var updatedUser = this.state.user;
-//   this.state.user.save().then( (data) => {
-//     this.setState({ watchedList: [] });
-//   });
-//   // Force the view to update with the new watchedList state
-//   // this.forceUpdate();
-// }
-
-// handleDeleteMovie(index){
-//   console.log('delete', this.state.watchedList[index]);
-//   // pull the object at this index from the watched list
-//   this.state.watchedList.splice(index, 1)
-//   console.log('updated watched list', this.state.watchedList);
-//   // Like a jQuery PUT
-//   this.state.user.set({watchedList: this.state.watchedList});
-//   // Push that change to the API
-//   this.state.user.save();
-//   // Force the view to update with the new watchedList state
-//   this.forceUpdate();
-// }
 
 removeFromWatchedList(index) {
   console.log('rejectedList');
@@ -172,7 +149,7 @@ deleteUser() {
 
         <form onSubmit={this.handleSubmit} >
           <input onChange={this.handlePicChange} type="file"/>
-          <img src={ image ? user.get('imageUrl') : this.state.preview} />
+          <img src={ this.state.preview} />
           <input className="btn btn-danger" type="submit" value="Upload"/>
         </form>
 
