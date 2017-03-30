@@ -7,6 +7,18 @@ class Header extends React.Component{
   constructor(props){
     super(props);
     this.logOut = this.logOut.bind(this);
+
+    var user = new User();
+    var userId = JSON.parse(localStorage.getItem('user')).objectId;
+
+    user.set('objectId', userId);
+    user.fetch().then(()=>{
+      this.setState({ name: user.get('name') });
+    });
+
+    this.state = {
+      name: null
+    }
   }
   logOut(e){
     e.preventDefault();
@@ -37,7 +49,7 @@ class Header extends React.Component{
             <ul className="nav navbar-nav navbar-right">
               <li><a href="#signup/" onClick={this.logOut}>Logout</a></li>
               <li className="dropdown">
-                <a href="#account/" className="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{user.get('name')}</a>
+                <a href="#account/" className="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{this.state.name}</a>
                 <ul className="dropdown-menu">
                   <li><a href="#">Action</a></li>
                   <li><a href="#">Another action</a></li>
