@@ -5,6 +5,8 @@ var User = require('../models/users').User;
 var Header = require('../layouts/header.jsx').Header;
 var ParseFile = require('../parse').ParseFile;
 
+var parse = require('../parse');
+
 class AccountContainer extends React.Component{
 constructor(props){
   super(props)
@@ -14,12 +16,19 @@ constructor(props){
 
   user.set('objectId', userId);
   user.fetch().then(()=>{
-    this.setState({ user: user })
+    this.setState({ user: user });
+
+    console.log('after fetch', user);
+    if(user.get('imageUrl')) {
+      console.log('firing state change');
+      this.setState({image: true});
+    }
   })
 
   this.state = {
     pic: null,
-    preview: null
+    preview: null,
+    image: false
   }
 
   this.handleDeleteMovie = this.handleDeleteMovie.bind(this);
@@ -29,52 +38,32 @@ constructor(props){
   this.deleteUser = this.deleteUser.bind(this);
 }
 
-componentWillMount() {
-
-  var user = User.current();
-
-  // var localUser = JSON.parse(localStorage.getItem('user'));
-  // console.log('here two',localUser.objectId);
-  // var user = new User();
-  //
-  // user.set('objectId', localUser.objectId);
-  // user.fetch().then(() => {
-  //   this.setState({ user: user, watchedList: user.get('watchedList') });
-  // });
-}
-
 handlePicChange(e){
   var file = e.target.files[0];
-  this.setState({pic: file});
+  this.setState({ pic: file });
 
   var reader = new FileReader();
   reader.onloadend = () => {
-    this.setState({preview: reader.result});
+    this.setState({ preview: reader.result });
   }
   reader.readAsDataURL(file);
 }
 
 handleSubmit(e){
-  e.preventDefault();
-  var pic = this.state.pic;
-  var fileUpload = new ParseFile(pic);
-  fileUpload.save({}, {
-    data: pic
-  }).then((response)=>{
-    var imageUrl = response.url;
-    var user = this.state.user;
-    user.set({
-      profilePic: {
-        name: this.state.pic.name,
-        url: imageUrl
-      }
+  var user = this.state.user;
+  parse.parse.initialize();
+  if(this.state.preview) {
+    var pic = this.state.pic;
+    var image = new ParseFile(pic);
+    image.save({}, {
+      data: pic
+    }).then((response) => {
+      var imageUrl = response.url;
+      user.set({ 'imageUrl' : imageUrl });
+      user.save();
+      return
     });
-    console.log('user', user)
-    // user.save().then(()=>{
-    //   this.setState({ user })
-    // });
-
-  });
+  }
 }
 
 clearList() {
@@ -113,8 +102,11 @@ deleteUser() {
 
     var user = this.state.user;
     var watchedList, rejectedList;
+    var image = this.state.image;
+    console.log('image state', image);
 
     if(user) {
+      console.log('image here', user.get('imageUrl'));
       watchedList = user.get('watchedList').map((movie, index) => {
         return(
           <li key={index}>
@@ -160,7 +152,7 @@ deleteUser() {
 
         <form onSubmit={this.handleSubmit} >
           <input onChange={this.handlePicChange} type="file"/>
-          <img src={this.state.preview} />
+          <img src={ image ? user.get('imageUrl') : this.state.pic} />
           <input className="btn btn-danger" type="submit" value="Upload"/>
         </form>
 

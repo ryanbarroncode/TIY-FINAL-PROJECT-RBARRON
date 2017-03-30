@@ -133,9 +133,16 @@ var ParseCollection = Backbone.Collection.extend({
   },
 });
 
+var ParseFile = Backbone.Model.extend({
+  urlRoot: function(){
+    return "https://ryanbarroncode.herokuapp.com/files/" + this.get('name');
+  }
+});
+
 
 module.exports = {
   parse,
   ParseModel,
-  ParseCollection
+  ParseCollection,
+  ParseFile
 };
