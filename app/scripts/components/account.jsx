@@ -69,18 +69,16 @@ handleSubmit(e){
 }
 
 removeFromWatchedList(index) {
-  console.log('rejectedList');
   var user = this.state.user;
-  var rejectedList = user.get('watchedList');
-  rejectedList.splice(index, 1);
-  user.set({rejectedList: rejectedList});
+  var watchedList = user.get('watchedList');
+  watchedList.splice(index, 1);
+  user.set({watchedList: watchedList});
   user.save().then(()=>{
     this.setState({user})
   })
 }
 
 removeFromRejectedList(index) {
-  console.log('rejectedList');
   var user = this.state.user;
   var rejectedList = user.get('rejectedList');
   rejectedList.splice(index, 1);
