@@ -301,7 +301,6 @@ class MarketingSectionContainer extends React.Component {
 
   handleToAccount() {
     console.log('Aw heck');
-    Backbone.history.navigate('account/', {trigger: true});
   }
 
   render() {
