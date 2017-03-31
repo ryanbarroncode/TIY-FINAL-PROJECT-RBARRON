@@ -6,7 +6,7 @@ var Backbone = require('backbone');
 var User = require('../models/users').User;
 var Header = require('../layouts/header.jsx').Header;
 var ParseFile = require('../parse').ParseFile;
-
+var GenerateTitleContainer = require('./generate_title.jsx').GenerateTitleContainer;
 var parse = require('../parse');
 
 class AccountContainer extends React.Component{
@@ -112,10 +112,10 @@ removeFromRejectedList(index) {
 
       watchedList = user.get('watchedList').map((movie, index) => {
         return(
-          React.createElement("div", {className: "list-group"}, 
+          React.createElement("div", {className: "list-group col-xs-12"}, 
               React.createElement("a", {key: index, className: "list-group-item active"}, 
                 React.createElement("div", {className: "flex"}, 
-              React.createElement("h4", {className: "list-group-item-heading"}, movie.title), 
+              React.createElement("h4", {className: "list-group-item-heading title-text "}, movie.title), 
               React.createElement("button", {className: "btn-danger", onClick: (e) => { this.removeFromWatchedList(index) }}, "Remove from list")
               ), 
               React.createElement("hr", null), 
@@ -133,12 +133,12 @@ removeFromRejectedList(index) {
           React.createElement("div", {className: "list-group"}, 
             React.createElement("a", {key: index, className: "list-group-item active"}, 
               React.createElement("div", {className: "flex"}, 
-                React.createElement("h4", {className: "list-group-item-heading"}, movie.title), 
+                React.createElement("h4", {className: "list-group-item-heading title-text-rejected"}, movie.title), 
                 React.createElement("button", {className: "btn-danger button-right", onClick: (e) => { this.removeFromRejectedList(index) }}, "Remove from list")
               ), 
               React.createElement("hr", null), 
-              React.createElement("div", {className: "list-group-item-text"}, " ", React.createElement("div", {className: "overview"}, "Overview"), " ", React.createElement("br", null), movie.overview)
-
+              React.createElement("div", {className: "list-group-item-text"}, " ", movie.overview
+              )
             )
           )
 
@@ -147,33 +147,48 @@ removeFromRejectedList(index) {
     }
     return(
       React.createElement("div", {className: "wrapper"}, 
+
         React.createElement(Header, null), 
 
+          React.createElement("div", {className: "container"}, 
+            React.createElement("div", {className: "row"}, 
+              React.createElement("div", {className: "col-md-12 col-xs-12"}, 
+                React.createElement("h2", {className: "bodytext-account"}, " Welcome to your Account page. This is where you will find your history of movies you have watched and rejected."), 
+                React.createElement("p", {className: "team-message"}, " We will be adding a log of upcoming features and a form that allows you to suggest a feature you would like to use. -RandoMovies team"), 
+                React.createElement("hr", null)
+              )
+            )
+          ), 
+
       React.createElement("div", {className: "col-md-12"}, 
-        React.createElement("div", {className: "col-md-6"}, 
-          React.createElement("h2", {className: "bodytext"}, "Watched Movie List"), 
+        React.createElement("div", {className: "col-md-6 col-xs-12"}, 
+          React.createElement("h2", {className: "bodytext-h2-green"}, "Watched Movie List"), 
           /*// <button className="btn-danger" onClick={this.clearList}>Clear list</button>*/
           React.createElement("ul", null, 
              watchedList 
           )
         ), 
 
-        React.createElement("div", {className: "col-md-6"}, 
-          React.createElement("h2", {className: "bodytext"}, "Rejected Movie List"), 
+        React.createElement("div", {className: "col-md-6 col-xs-12"}, 
+          React.createElement("h2", {className: "bodytext-h2-red"}, "Rejected Movie List"), 
           React.createElement("ul", null, 
              rejectedList 
           )
-        ), 
+        )
 
+
+        /*<button onClick={this.deleteUser}>Delete Account</button>*/
+
+      ), 
+
+      React.createElement("div", {className: "container"}, 
         React.createElement("form", {onSubmit: this.handleSubmit}, 
           React.createElement("input", {onChange: this.handlePicChange, type: "file"}), 
           React.createElement("img", {src:  this.state.preview}), 
           React.createElement("input", {className: "btn btn-danger", type: "submit", value: "Upload"})
         )
-
-        /*<button onClick={this.deleteUser}>Delete Account</button>*/
-
       )
+
     )
     )
   }
@@ -185,7 +200,7 @@ module.exports = {
   AccountContainer
 };
 
-},{"../layouts/header.jsx":6,"../models/users":8,"../parse":9,"backbone":11,"react":170}],2:[function(require,module,exports){
+},{"../layouts/header.jsx":6,"../models/users":8,"../parse":9,"./generate_title.jsx":2,"backbone":11,"react":170}],2:[function(require,module,exports){
 "use strict";
 var React = require('react');
 var Backbone = require('backbone');
@@ -323,24 +338,30 @@ class MarketingSectionContainer extends React.Component {
                  genres 
               ), 
                this.state.movie ?
-                React.createElement("div", {className: "col-md-12 flexcontainer"}, 
-                  React.createElement("br", null), 
-                  React.createElement("div", {className: "col-md-4 row"}, 
+                React.createElement("div", {className: "col-md-12 col-xs-12 flexcontainer"}, 
+
+                  React.createElement("div", {className: "col-md-4 col-xs-4 "}, 
                     React.createElement("img", {src: "http://image.tmdb.org/t/p/w1000" +  movie.get('poster_path'), alt: movie.get('title'), width: "550", height: "500"})
                     ), 
 
-                    React.createElement("div", {className: "col-md-6"}, 
+                    React.createElement("div", {className: "col-md-6 col-xs-0"}, 
 
                       React.createElement("h3", {className: "movie-title"}, movie.get('title')), 
                       React.createElement("p", {className: "col-xs-12 col-md-6 movie-overview"}, movie.get('overview'))
                     ), 
 
-                      React.createElement("div", {className: "col-xs-6 col-md-2"}, 
-                      React.createElement("button", {className: "btn btn-primary btn-lg outline", onClick: this.addMovieToWatchedList}, "Add to Watched List"), 
-                      React.createElement("br", null), 
-                        React.createElement("button", {onClick: this.handleToAccount, className: "btn btn-success btn-lg outline"}, React.createElement("a", {target: "_blank", href: 'https://www.google.com/search?q=' + movie.get('title') + ' movie stream'}, " Google it ")), 
-                        React.createElement("br", null), 
-                        React.createElement("button", {className: "btn btn-primary btn-lg outline", onClick: this.addMovieToRejectedList}, "Reject Movie")
+                      React.createElement("div", {className: "col-xs-4 col-md-2 container"}, 
+
+                        React.createElement("button", {className: "btn btn-primary btn-lg outline", 
+                          onClick: this.addMovieToWatchedList}, "Add to Watched List"
+                        ), 
+
+                        React.createElement("button", {onClick: this.handleToAccount, className: "btn btn-success btn-lg outline"}, 
+                          React.createElement("a", {target: "_blank", href: 'https://www.google.com/search?q=' + movie.get('title') + ' movie stream'}, " Google it ")
+                          ), 
+
+                        React.createElement("button", {className: "btn btn-primary btn-lg outline", onClick: this.addMovieToRejectedList}, 
+                          "Reject Movie")
 
                       )
                 )
@@ -394,18 +415,9 @@ class SignInContainer extends React.Component{
         React.createElement("div", {className: "row "}, 
           React.createElement("div", {className: "col-md-12 "}, 
 
-              React.createElement("ul", {className: "flexcontainer"}, 
-                React.createElement("li", null, React.createElement("h1", null, "RandoMovie")), 
-                React.createElement("li", null, React.createElement("h2", null, "Est. 2017"))
-              )
+            React.createElement(LoginForm, {action: this.login})
 
-          ), 
-
-          React.createElement(LoginForm, {action: this.login})
-
-
-
-
+          )
 
         )
       )
@@ -448,19 +460,19 @@ class LoginForm extends React.Component{
   render(){
     return(
 
-      React.createElement("div", {className: "col-md-6"}, 
-        React.createElement("h1", null, "Login"), 
+      React.createElement("div", {className: "col-md-6 login-container center-block"}, 
+        React.createElement("h1", {className: "shuffleText"}, "Login to RandoMovies"), 
           React.createElement("form", {className: "login-form", onSubmit: this.handleLoginSubmit.bind(this), id: "login"}, 
             React.createElement("div", {className: "form-group"}, 
-              React.createElement("label", {htmlFor: "email-login"}, "Email"), 
-              React.createElement("input", {onChange: this.handleLoginUsernameChange.bind(this), className: "form-control", name: "username", id: "email-login", type: "username", placeholder: "Email"})
+              React.createElement("label", {className: "shuffleTextRed", htmlFor: "email-login"}, "Email"), 
+              React.createElement("input", {onChange: this.handleLoginUsernameChange.bind(this), className: "form-control", name: "username", id: "email-login", type: "username", placeholder: "RandoMovies@gmail.com"})
             ), 
             React.createElement("div", {className: "form-group"}, 
-              React.createElement("label", {htmlFor: "password-login"}, "Password"), 
+              React.createElement("label", {className: "shuffleTextRed", htmlFor: "password-login"}, "Password"), 
               React.createElement("input", {onChange: this.handleLoginPasswordChange.bind(this), className: "form-control", name: "password", id: "password-login", type: "password", placeholder: "Password"})
             ), 
             React.createElement("input", {className: "btn btn-primary", type: "submit", value: "Login"}), 
-              React.createElement("p", null, "Need an Account? ", React.createElement("a", {href: "#signup/"}, "Signup"))
+              React.createElement("p", {className: "need-an-account"}, " Need an Account? ", React.createElement("a", {href: "#signup/", className: "signuptext"}, "Signup"))
 
           )
       )
@@ -499,8 +511,18 @@ class SignUpContainer extends React.Component{
  }
   render(){
     return(
-      React.createElement(SignUpForm, {action: this.signup})
+      React.createElement("div", {className: "wrapper"}, 
+        React.createElement(Header, null), 
+          React.createElement("div", {className: "container"}, 
+            React.createElement("div", {className: "row "}, 
+              React.createElement("div", {className: "col-md-12 "}, 
 
+                React.createElement(SignUpForm, {action: this.signup})
+
+              )
+    )
+  )
+)
     )
   }
 }
@@ -543,28 +565,26 @@ class SignUpForm extends React.Component{
       }
       render(){
         return(
-          React.createElement("div", {className: "wrapper"}, 
-            React.createElement(Header, null), 
-          React.createElement("div", {className: "col-md-4 "}, 
-            React.createElement("h1", null, "Signup"), 
+          React.createElement("div", {className: "col-md-6 login-container center-block"}, 
+            React.createElement("h1", {className: "shuffleText"}, "Signup for RandoMovies"), 
             React.createElement("form", {className: "signup", onSubmit: this.handleSubmit, id: "signup"}, 
               React.createElement("div", {className: "form-group"}, 
-                React.createElement("label", {id: "signup-email", htmlFor: "email"}, "Email"), 
+                React.createElement("label", {className: "shuffleTextRed", id: "signup-email", htmlFor: "email"}, "Email"), 
                 React.createElement("input", {onChange: this.handleEmailChange, className: "form-control", name: "email", id: "email-signup", type: "email", placeholder: "Email"})
               ), 
               React.createElement("div", {className: "form-group"}, 
-                React.createElement("label", {id: "signup-password", htmlFor: "password"}, "Password"), 
+                React.createElement("label", {className: "shuffleTextRed", id: "signup-password", htmlFor: "password"}, "Password"), 
                 React.createElement("input", {onChange: this.handlePasswordChange, className: "form-control", name: "password", id: "password-signup", type: "password", placeholder: "Password"})
               ), 
               React.createElement("div", {className: "form-group"}, 
-                React.createElement("label", {id: "signup-name", htmlFor: "name"}, "RandoName"), 
+                React.createElement("label", {className: "shuffleTextRed", id: "signup-name", htmlFor: "name"}, "RandoName"), 
                 React.createElement("input", {onChange: this.handleNameChange, className: "form-control", name: "name", id: "name-signup", type: "name", placeholder: "Nickname"})
               ), 
 
-              React.createElement("input", {className: "btn btn-primary", type: "submit", value: "signup"})
+              React.createElement("input", {className: "btn btn-primary", type: "submit", value: "Signup"}), 
+                React.createElement("p", {className: "need-an-account"}, " Already have an Account? ", React.createElement("a", {href: "#signin/", className: "signuptext"}, "SignIn"))
 
             )
-          )
           )
         )
       }
@@ -622,6 +642,7 @@ class Header extends React.Component{
 
     //ajax call to parse logout endpoint
     User.logout();
+      this.setState({ name: null });
 
     // Clear local storage
 
@@ -630,9 +651,9 @@ class Header extends React.Component{
     var user = User.current();
     return(
       React.createElement("nav", {className: "navbar top-header navbar-default navbar-static-top"}, 
-        React.createElement("div", {className: "container-fluid"}, 
+        React.createElement("div", {className: "container-fluid col-md-12"}, 
           React.createElement("div", {className: "navbar-header randologo bodytext"}, 
-            React.createElement("a", {className: "navbar-brand randologo", href: "#generate/"}, "RandoMovies")
+            React.createElement("a", {className: "navbar-brand randologo col-xs6", href: "#generate/"}, "RandoMovies")
           ), 
 
           React.createElement("div", {className: "collapse navbar-collapse", id: "bs-example-navbar-collapse-1"}, 
@@ -644,14 +665,7 @@ class Header extends React.Component{
             React.createElement("ul", {className: "nav navbar-nav navbar-right"}, 
               React.createElement("li", null, React.createElement("a", {href: "signin/", onClick: this.logOut}, "Logout")), 
               React.createElement("li", {className: "dropdown"}, 
-                React.createElement("a", {href: "#account/", className: "dropdown-toggle", "data-toggle": "dropdown", role: "button", "aria-haspopup": "true", "aria-expanded": "false"}, this.state.name), 
-                React.createElement("ul", {className: "dropdown-menu"}, 
-                  React.createElement("li", null, React.createElement("a", {href: "#"}, "Action")), 
-                  React.createElement("li", null, React.createElement("a", {href: "#"}, "Another action")), 
-                  React.createElement("li", null, React.createElement("a", {href: "#"}, "Something else here")), 
-                  React.createElement("li", {role: "separator", className: "divider"}), 
-                  React.createElement("li", null, React.createElement("a", {href: "#"}, "Separated link"))
-                )
+                React.createElement("a", {href: "#account/", className: "dropdown-toggle col-xs-6", "data-toggle": "dropdown", role: "button", "aria-haspopup": "true", "aria-expanded": "false"}, this.state.name)
               )
             )
           )
