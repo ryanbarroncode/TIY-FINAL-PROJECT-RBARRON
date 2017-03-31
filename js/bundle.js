@@ -361,7 +361,8 @@ class MarketingSectionContainer extends React.Component {
                           ), 
 
                         React.createElement("button", {className: "btn btn-primary btn-lg outline", onClick: this.addMovieToRejectedList}, 
-                          "Reject Movie")
+                          "Reject Movie"
+                        )
 
                       )
                 )
